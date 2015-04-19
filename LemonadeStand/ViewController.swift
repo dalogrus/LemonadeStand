@@ -17,6 +17,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var iceCubesToPurchaseLabel: UILabel!
     @IBOutlet weak var lemonsToMixLabel: UILabel!
     @IBOutlet weak var iceCubesToMixLabel: UILabel!
+    @IBOutlet weak var weatherImage: UIImageView!
     
     var cash = 10
     let lemonPrice = 2
@@ -31,14 +32,15 @@ class ViewController: UIViewController {
     var acidity:Int = 0
     var customers: [Customer] = []
     var lemonadeIs:CGFloat = 0
-    
-    
-//    var lemonadeMixRatio:CGFLOAT = 0.0
+    var weatherModifier = 0
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        self.view.addSubview(weatherImage)
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -279,13 +281,15 @@ class ViewController: UIViewController {
     }
     
     func createCustomers() -> [Customer] {
-        var numberOfCustomersToday = (Int(arc4random_uniform(UInt32(9)))) + 1
+        generateWeatherModifier()
+        println("Weather modifier: \(weatherModifier)")
+        var numberOfCustomersToday = (Int(arc4random_uniform(UInt32(weatherModifier)))) + 1
         var customers: [Customer] = []
         for var customerNumber = 0; customerNumber < numberOfCustomersToday; ++customerNumber {
             var customer = createCustomer()
             
             customers.append(customer)
-        }
+            }
         return customers
     }
     
@@ -321,6 +325,27 @@ class ViewController: UIViewController {
         iceCubeInventory = 1
         iceCubesInInventoryLabel.text = "\(iceCubeInventory) Ice Cubes"
     }
+    func generateWeatherModifier() -> Int {
+        
+        var randomWeather = Int(arc4random_uniform(UInt32(2)))
+        // rendomWeather = 0 -> bad weather (-3 max customers)
+        // rendomWeather = 1 -> sunny weather (+4 max customers)
+        // rendomWeather = 2 -> fair weather (no change in max customers)
+        if randomWeather == 0 {
+            weatherModifier = 6
+            weatherImage.image = UIImage(named: "cold")
+        }
+        else if randomWeather == 1 {
+            weatherModifier = 13
+            weatherImage.image = UIImage(named: "warm")
+        }
+        else {
+            weatherModifier = 9
+            weatherImage.image = UIImage(named: "mild")
+        }
+        return weatherModifier
+    }
+
 }
 
 
